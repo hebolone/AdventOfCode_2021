@@ -24,8 +24,7 @@ class Solver : SolverBase() {
         val result = _Algos.GetAlgo(day, typeOfQuestion)
 
         //  Get Input
-        if(result != null)
-            retValue = result(GetInput(GetInputFileName(day)))
+        if(result != null) retValue = result(GetInput(GetInputFileName(day)))
 
         return retValue
     }

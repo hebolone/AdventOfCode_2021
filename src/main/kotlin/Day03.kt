@@ -29,7 +29,6 @@ class Day03 : AlgosBase()  {
         val gammaResult = CalculateGammaRate(input)
         val retValue = mutableListOf<String>()
         input.forEach { if(it[cycle] == gammaResult[cycle]) retValue.add(it) }
-        //return if(retValue.count() == 1) retValue else GetOxygenRating(retValue, cycle + 1)
         return when(retValue.count()) {
             0 -> GetOxygenRating(input, cycle + 1)
             1 -> retValue
