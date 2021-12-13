@@ -20,26 +20,20 @@ class Day02 : AlgosBase() {
         input.forEach {
             val movement = Parser(it)
             when(movement.direction) {
-                TDirection.DOWN -> {
-                    aim += movement.unit
-                }
-                TDirection.UP -> {
-                    aim -= movement.unit
-                }
+                TDirection.DOWN -> aim += movement.unit
+                TDirection.UP -> aim -= movement.unit
                 TDirection.FORWARD -> {
                     horizontal += movement.unit
                     depth += aim * movement.unit
                 }
-                //  Aim calculation
-
             }
         }
         return horizontal * depth
     }
 
     //region Private
-    private enum class TDirection(val multiplier : Int) {
-        FORWARD(1), DOWN(1), UP(-1)
+    private enum class TDirection {
+        FORWARD, DOWN, UP
     }
     private fun Parser(value : String) : Movement {
         val splitted = value.split(" ")
