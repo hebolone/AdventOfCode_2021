@@ -7,8 +7,8 @@ class Day03 : AlgosBase()  {
     }
 
     override fun Advanced(input : MutableList<String>) : Int {
-        val oxygenRating = GetOxygenRating(input)
-        val co2Rating = GetCO2Rating(input)
+        val oxygenRating = GetRating(input, TTypeOfRating.OXYGEN)
+        val co2Rating = GetRating(input, TTypeOfRating.CO2)
 
         return Integer.parseInt(oxygenRating.first(), 2) * Integer.parseInt(co2Rating.first(), 2)
     }
@@ -25,25 +25,18 @@ class Day03 : AlgosBase()  {
         return gammaRateResult
     }
 
-    private fun GetOxygenRating(input : MutableList<String>, cycle : Int = 0) : MutableList<String> {
-        val gammaResult = CalculateGammaRate(input)
+    private enum class TTypeOfRating { OXYGEN, CO2 }
+
+    private fun GetRating(input : MutableList<String>, typeOfRating : TTypeOfRating, cycle : Int = 0) : MutableList<String> {
+        var gammaResult = CalculateGammaRate(input)
+        if(typeOfRating == TTypeOfRating.CO2)
+            gammaResult = InvertBinaryNumber(gammaResult)
         val retValue = mutableListOf<String>()
         input.forEach { if(it[cycle] == gammaResult[cycle]) retValue.add(it) }
         return when(retValue.count()) {
-            0 -> GetOxygenRating(input, cycle + 1)
+            0 -> GetRating(input, typeOfRating, cycle + 1)
             1 -> retValue
-            else -> GetOxygenRating(retValue, cycle + 1)
-        }
-    }
-
-    private fun GetCO2Rating(input : MutableList<String>, cycle : Int = 0) : MutableList<String> {
-        val gammaResultInverted = InvertBinaryNumber(CalculateGammaRate(input))
-        val retValue = mutableListOf<String>()
-        input.forEach { if(it[cycle] == gammaResultInverted[cycle]) retValue.add(it) }
-        return when(retValue.count()) {
-            0 -> GetCO2Rating(input, cycle + 1)
-            1 -> retValue
-            else -> GetCO2Rating(retValue, cycle + 1)
+            else -> GetRating(retValue, typeOfRating, cycle + 1)
         }
     }
 

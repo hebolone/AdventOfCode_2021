@@ -1,20 +1,18 @@
 import kotlin.properties.Delegates
 
-class Day04 : AlgosBase()  {
-    override fun Basic(input : MutableList<String>) : Int {
-        var datas = if(IsTest) _InputTest.split(regex = "\\n".toRegex()).toMutableList() else input
+class Day04 : AlgosBase() {
+    override fun Basic(input: MutableList<String>): Int {
+        var datas = if (IsTest) _InputTest.split(regex = "\\n".toRegex()).toMutableList() else input
         ParseInput(datas)
-        val result = NumberExtraction(TTypeOfSearch.FIRSTWINNER)
 
-        return result
+        return NumberExtraction(TTypeOfSearch.FIRSTWINNER)
     }
 
-    override fun Advanced(input : MutableList<String>) : Int {
-        var datas = if(IsTest) _InputTest.split(regex = "\\n".toRegex()).toMutableList() else input
+    override fun Advanced(input: MutableList<String>): Int {
+        var datas = if (IsTest) _InputTest.split(regex = "\\n".toRegex()).toMutableList() else input
         ParseInput(datas)
-        val result = NumberExtraction(TTypeOfSearch.LASTWINNER)
 
-        return result
+        return NumberExtraction(TTypeOfSearch.LASTWINNER)
     }
 
     //region Private
@@ -23,14 +21,14 @@ class Day04 : AlgosBase()  {
         _RandomNumbers = input[0].split(",").map { it.toInt() }
 
         //  Second value is list of bingo boards
-        var board = Board()
+        var board = BingoBoard()
         var counter = 1
         input.drop(1).forEach {
             if (!it.isNullOrEmpty()) {
                 val boardRawDatas = it.split(" ").filter { it.isNotBlank() }.map { it.toInt() }
                 when (counter) {
                     1 -> {
-                        board = Board()
+                        board = BingoBoard()
                         _Boards.add(board)
                     }
                     5 -> counter = 0
@@ -44,14 +42,14 @@ class Day04 : AlgosBase()  {
     private fun NumberExtraction(typeOfSearch : TTypeOfSearch) : Int {
         //Extract all the numbers and stop when there's a winner
         var retValue = -1
-        var _winningBoards = mutableListOf<Board>()
+        var _winningBoards = mutableListOf<BingoBoard>()
         _RandomNumbers.forEach {
             randomNumber ->
             run {
                 _Boards.forEach { board ->
                     board.InsertNumber(randomNumber)
                     if(board.CheckForWin()) {
-                        var unmarkedNumbers = board.GetUnmarkedNumbers()
+                        var unmarkedNumbers = board.GetSumOfUnmarkedNumbers()
                         if(typeOfSearch == TTypeOfSearch.FIRSTWINNER)
                             return randomNumber * unmarkedNumbers
                         else {
@@ -70,7 +68,7 @@ class Day04 : AlgosBase()  {
     }
 
     private var _RandomNumbers : List<Int> by Delegates.notNull()
-    private val _Boards = mutableListOf<Board>()
+    private val _Boards = mutableListOf<BingoBoard>()
     private enum class TTypeOfSearch { FIRSTWINNER, LASTWINNER }
     private val _InputTest = """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
@@ -95,7 +93,7 @@ class Day04 : AlgosBase()  {
 
     private data class Number(val number : Int, var signed : Boolean = false)
 
-    private class Board {
+    private class BingoBoard {
         private val _Numbers = mutableListOf<Number>()
         private val _WinningPatterns = listOf<List<Int>>(
             //Rows
@@ -131,7 +129,7 @@ class Day04 : AlgosBase()  {
             return false
         }
 
-        fun GetUnmarkedNumbers() : Int = _Numbers.filter{ it.signed == false }.sumOf { it.number }
+        fun GetSumOfUnmarkedNumbers() : Int = _Numbers.filter{ it.signed == false }.sumOf { it.number }
     }
     //endregion
 }
