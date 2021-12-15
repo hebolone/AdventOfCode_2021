@@ -3,7 +3,7 @@ import java.io.File
 abstract class SolverBase {
     private val _InputFile = "/home/simone/Scrivania/AdventOfCode/day_%day%.txt"
 
-    abstract fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : Int?
+    abstract fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String?
 
     protected fun GetInputFileName(day : Int) : String = _InputFile.replace("%day%", Utils.GetCorrectNumber(day))
 
@@ -17,14 +17,14 @@ abstract class SolverBase {
 class Solver : SolverBase() {
     val _Algos = Algos()
 
-    override fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : Int? {
-        var retValue : Int? = null
+    override fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String? {
+        var retValue : String? = null
 
         //  Choose algorhythm
         val result = _Algos.GetAlgo(day, typeOfQuestion)
 
         //  Get Input
-        if(result != null) retValue = result(GetInput(GetInputFileName(day)))
+        if(result != null) retValue = result(GetInput(GetInputFileName(day))).toString()
 
         return retValue
     }

@@ -1,5 +1,7 @@
+import kotlin.properties.Delegates
+
 class Algos {
-    private val _Algos : MutableMap<String, (MutableList<String>) -> Int> = mutableMapOf()
+    private var _Algos : List<AlgoDefinition> by Delegates.notNull()
 
     init {
         val day01 = Day01()
@@ -9,24 +11,27 @@ class Algos {
         val day05 = Day05()
         val day06 = Day06()
 
-        day06.IsTest = true
+        _Algos = listOf(
+            AlgoDefinition(1, TYPEOFQUESTION.BASIC, day01::Basic),
+            AlgoDefinition(1, TYPEOFQUESTION.ADVANCED, day01::Advanced),
+            AlgoDefinition(2, TYPEOFQUESTION.BASIC, day02::Basic),
+            AlgoDefinition(2, TYPEOFQUESTION.ADVANCED, day02::Advanced),
+            AlgoDefinition(3, TYPEOFQUESTION.BASIC, day03::Basic),
+            AlgoDefinition(3, TYPEOFQUESTION.ADVANCED, day03::Advanced),
+            AlgoDefinition(4, TYPEOFQUESTION.BASIC, day04::Basic),
+            AlgoDefinition(4, TYPEOFQUESTION.ADVANCED, day04::Advanced),
+            AlgoDefinition(5, TYPEOFQUESTION.BASIC, day05::Basic),
+            AlgoDefinition(5, TYPEOFQUESTION.ADVANCED, day05::Advanced),
+            AlgoDefinition(6, TYPEOFQUESTION.BASIC, day06::Basic),
+            AlgoDefinition(6, TYPEOFQUESTION.ADVANCED, day06::Advanced),
+        )
 
-        _Algos["01a"] = day01::Basic
-        _Algos["01b"] = day01::Advanced
-        _Algos["02a"] = day02::Basic
-        _Algos["02b"] = day02::Advanced
-        _Algos["03a"] = day03::Basic
-        _Algos["03b"] = day03::Advanced
-        _Algos["04a"] = day04::Basic
-        _Algos["04b"] = day04::Advanced
-        _Algos["05a"] = day05::Basic
-        _Algos["05b"] = day05::Advanced
-        _Algos["06a"] = day06::Basic
-        _Algos["06b"] = day06::Advanced
+        //day06.IsTest = true
     }
 
     enum class TYPEOFQUESTION(val symbol : String) { BASIC("a"), ADVANCED("b") }
 
-    fun GetAlgo(day : Int, typeOfQuestion : TYPEOFQUESTION) : ((MutableList<String>) -> Int)? = _Algos["${Utils.GetCorrectNumber(day)}${typeOfQuestion.symbol}"]
-}
+    data class AlgoDefinition(val day : Int, val typeOfQuestion: TYPEOFQUESTION, val algorythm : (MutableList<String>) -> Any)
 
+    fun GetAlgo(day : Int, typeOfQuestion : TYPEOFQUESTION) : ((MutableList<String>) -> Any)? = _Algos.first { it.day == day && it.typeOfQuestion == typeOfQuestion }.algorythm
+}

@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
     val results = mutableListOf<Day>()
 
     //  Single question
-    val day = 6
+    val day = 5
     var typeOfQuestion = Algos.TYPEOFQUESTION.BASIC
     results.addIfPresent(day, typeOfQuestion, s.Solve(day, typeOfQuestion))
     typeOfQuestion = Algos.TYPEOFQUESTION.ADVANCED
@@ -25,10 +25,10 @@ fun main(args: Array<String>) {
     }
 }
 
-data class Day(val day : Int, val typeOfQuestion : Algos.TYPEOFQUESTION, var result : Int)
+data class Day(val day : Int, val typeOfQuestion : Algos.TYPEOFQUESTION, var result : String)
 
 fun Day.toPrintableString() = "Day: $day (${typeOfQuestion}) = $result"
 
-fun MutableList<Day>.addIfPresent(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION, result : Int?) {
+fun MutableList<Day>.addIfPresent(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION, result : String?) {
     if(result != null) this.add(Day(day, typeOfQuestion, result))
 }
