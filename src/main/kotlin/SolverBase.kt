@@ -1,17 +1,17 @@
 import java.io.File
 
 abstract class SolverBase {
-    private val _InputFile = "/home/simone/Scrivania/AdventOfCode/day_%day%.txt"
+
 
     abstract fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String?
 
-    protected fun GetInputFileName(day : Int) : String = _InputFile.replace("%day%", Utils.GetCorrectNumber(day))
 
-    protected fun GetInput(uri : String) : MutableList<String>  {
+
+    /*protected fun GetInput(uri : String) : MutableList<String>  {
         val retValue = mutableListOf<String>()
         File(uri).forEachLine { retValue.add(it) }
         return retValue
-    }
+    }*/
 }
 
 class Solver : SolverBase() {
@@ -21,10 +21,10 @@ class Solver : SolverBase() {
         var retValue : String? = null
 
         //  Choose algorhythm
-        val result = _Algos.GetAlgo(day, typeOfQuestion)
+        val algorythm = _Algos.GetAlgo(day, typeOfQuestion)
 
         //  Get Input
-        if(result != null) retValue = result(GetInput(GetInputFileName(day))).toString()
+        if(algorythm != null) retValue = algorythm(Utils.GetInput(Utils.GetInputFileName(day))).toString()
 
         return retValue
     }

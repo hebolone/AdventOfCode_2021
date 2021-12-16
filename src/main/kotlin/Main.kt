@@ -7,7 +7,7 @@ fun main(args: Array<String>) {
     val results = mutableListOf<Day>()
 
     //  Single question
-    val day = 5
+    val day = 8
     var typeOfQuestion = Algos.TYPEOFQUESTION.BASIC
     results.addIfPresent(day, typeOfQuestion, s.Solve(day, typeOfQuestion))
     typeOfQuestion = Algos.TYPEOFQUESTION.ADVANCED
