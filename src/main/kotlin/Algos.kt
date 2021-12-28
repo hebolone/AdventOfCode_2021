@@ -32,7 +32,7 @@ class Algos {
             AlgoDefinition(8, TYPEOFQUESTION.ADVANCED, day08::Advanced),
         )
 
-        day08.IsTest = true
+        //day08.IsTest = true
     }
 
     enum class TYPEOFQUESTION(val symbol : String) { BASIC("a"), ADVANCED("b") }

@@ -1,30 +1,17 @@
-import java.io.File
-
-abstract class SolverBase {
-
-
-    abstract fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String?
-
-
-
-    /*protected fun GetInput(uri : String) : MutableList<String>  {
-        val retValue = mutableListOf<String>()
-        File(uri).forEachLine { retValue.add(it) }
-        return retValue
-    }*/
-}
-
-class Solver : SolverBase() {
+class Solver  {
     val _Algos = Algos()
 
-    override fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String? {
+    fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String? {
         var retValue : String? = null
 
         //  Choose algorhythm
-        val algorythm = _Algos.GetAlgo(day, typeOfQuestion)
+        val algorithm = _Algos.GetAlgo(day, typeOfQuestion)
+
+        //  Choose data files
+        val fileName = Utils.GetInputFileName(day)
 
         //  Get Input
-        if(algorythm != null) retValue = algorythm(Utils.GetInput(Utils.GetInputFileName(day))).toString()
+        if(algorithm != null) retValue = algorithm(Utils.GetInput(fileName)).toString()
 
         return retValue
     }
