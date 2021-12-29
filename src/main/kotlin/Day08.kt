@@ -10,19 +10,6 @@ class Day08 : AlgosBase() {
     }
 
     //region Private
-    private val _DigitDefinition = mapOf(
-        0 to "abcefg",
-        1 to "cf",
-        2 to "acdeg",
-        3 to "acdfg",
-        4 to "bcdf",
-        5 to "abdfg",
-        6 to "abdefg",
-        7 to "acf",
-        8 to "abcdefg",
-        9 to "abcdfg"
-    )
-
     private fun ParseInputBasic(input : MutableList<String>) : Int {
         var retValue = 0
         input.forEach {
@@ -36,15 +23,11 @@ class Day08 : AlgosBase() {
         var retValue = 0
         for(line in input) {
             val allDigits = AllDigits()
-            var correctSequence = arrayOfNulls<Char>(7)
             val digits = ParseSingleLine(line)
             (0..9).forEach {
                 val digit = Digit(digits[it])
                 allDigits.add(digit)
             }
-            //  Search for segment a (7 not 1)
-            val firstSegment = allDigits[7]!!.Segments.OperationNot(allDigits[1]!!.Segments)
-            correctSequence[0] = firstSegment.first()
 
             //  Search for 3 (1 and sequence length of 5)
             allDigits.Digits.filter { it.Segments.count() == 5 }.forEach {
@@ -53,18 +36,18 @@ class Day08 : AlgosBase() {
             }
 
             //  Search for 6 (1 not 6 length results in a segment of 1 length)
-            val len6digits = allDigits.Digits.filter { it.Segments.count() == 6 }
-            len6digits.forEach {
+            var correctSequence2 = ' '
+            allDigits.Digits.filter { it.Segments.count() == 6 }.forEach {
                 val resultOperation = allDigits[1]!!.Segments.OperationNot(it.Segments)
                 if(resultOperation.count() == 1) {
                     it.Value = 6
-                    correctSequence[2] = resultOperation.first()
+                    correctSequence2 = resultOperation.first()
                 }
             }
 
             //  Search for 2 (5 length and sequence[2]
             allDigits.Digits.filter { it.Segments.count() == 5 && it.Value == null }.forEach {
-                val c : CharArray = charArrayOf(correctSequence[2]!!)
+                val c : CharArray = charArrayOf(correctSequence2)
                 val resultOperation = it.Segments.OperationAnd(c)
                 if(resultOperation.count() == 1) {
                     it.Value = 2
@@ -78,7 +61,7 @@ class Day08 : AlgosBase() {
             val result4not1 = allDigits[4]!!.Segments.OperationNot(allDigits[1]!!.Segments)
             allDigits.Digits.filter { it.Segments.count() == 6 && it.Value == null }.forEach {
                 val resultOperation = result4not1.OperationNot(it.Segments)
-                if(resultOperation.count() == 0)
+                if(resultOperation.isEmpty())
                     it.Value = 9
             }
 
@@ -104,31 +87,21 @@ class Day08 : AlgosBase() {
         return matchResult.map{ it.value }.toList()
     }
 
-    private fun String.AlphabeticalOrder() : String = this.toCharArray().sortedBy { it }.joinToString(separator = "")
-
-    private fun String.Equals(value : String) : Boolean = this.AlphabeticalOrder() == value.AlphabeticalOrder()
-
     private class Digit(val segments : String) {
         private var _Segments : CharArray = segments.toCharArray().sortedArray()
-        private var _Value : Int? = null
         init {
             AssignValue()
         }
-
         private fun AssignValue() {
             when(segments.length) {
-                2 -> _Value = 1
-                3 -> _Value = 7
-                4 -> _Value = 4
-                7 -> _Value = 8
+                2 -> Value = 1
+                3 -> Value = 7
+                4 -> Value = 4
+                7 -> Value = 8
             }
         }
-        var Value : Int?
-            get() = _Value
-            set(value) {
-                _Value = value
-            }
 
+        var Value : Int? = null
         val Segments = _Segments
     }
 

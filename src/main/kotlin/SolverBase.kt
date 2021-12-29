@@ -1,5 +1,5 @@
 class Solver  {
-    val _Algos = Algos()
+    private val _Algos = Algos()
 
     fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String? {
         var retValue : String? = null

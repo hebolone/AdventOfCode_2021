@@ -1,5 +1,5 @@
-class Board<T>(val x : Int, val y : Int, val initializer : () -> T) {
-    private val _Datas : MutableList<T> = mutableListOf()
+open class Board<T>(val x : Int, val y : Int, initializer : () -> T) {
+    protected val _Datas : MutableList<T> = mutableListOf()
     init {
         (1..(x * y)).forEach { _ -> _Datas.add(initializer()) }
     }
@@ -16,5 +16,15 @@ class Board<T>(val x : Int, val y : Int, val initializer : () -> T) {
             sb.appendLine()
         } }
         return sb.toString()
+    }
+}
+
+class BoardExtended<T>(xExt : Int, yExt : Int, initializerExt : () -> T) : Board<T>(xExt, yExt, initializerExt) {
+    fun GetOrNull(xFrom : Int, yFrom : Int) : T? {
+        val index = xFrom + yFrom * x
+        return if(xFrom < 0 || xFrom >= x || yFrom < 0 || yFrom >= y)
+            null
+        else
+            _Datas[index]
     }
 }
