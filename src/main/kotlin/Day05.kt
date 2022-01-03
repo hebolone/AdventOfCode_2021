@@ -64,8 +64,8 @@ class Day05 : AlgosBase()  {
                 var actualX = minOf(from.x, to.x)
                 val finalX = maxOf(from.x, to.x)
                 while(actualX <= finalX) {
-                    val actualValue = board.Get(actualX, from.y)
-                    board.Set(actualX, from.y, actualValue + 1)
+                    val actualValue = board[actualX, from.y]
+                    board[actualX, from.y] = actualValue + 1
                     actualX ++
                 }
             }
@@ -73,8 +73,8 @@ class Day05 : AlgosBase()  {
                 var actualY = minOf(from.y, to.y)
                 val finalY = maxOf(from.y, to.y)
                 while(actualY <= finalY) {
-                    val actualValue = board.Get(from.x, actualY)
-                    board.Set(from.x, actualY, actualValue + 1)
+                    val actualValue = board[from.x, actualY]
+                    board[from.x, actualY] = actualValue + 1
                     actualY ++
                 }
             }
@@ -85,8 +85,8 @@ class Day05 : AlgosBase()  {
                     val incX = if(from.x - to.x > 0) -1 else 1
                     val incY = if(from.y - to.y > 0) -1 else 1
                     (0..(abs(from.x - to.x))).forEach {
-                        val actualValue = board.Get(actualX, actualY)
-                        board.Set(actualX, actualY, actualValue + 1)
+                        val actualValue = board[actualX, actualY]
+                        board[actualX, actualY] = actualValue + 1
                         actualX += incX
                         actualY += incY
                     }

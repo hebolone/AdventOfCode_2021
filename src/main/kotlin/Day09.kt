@@ -28,7 +28,7 @@ class Day09 : AlgosBase() {
             run {
                 var line = 0
                 for (c in it) {
-                    val tile = board.Get(line, index)
+                    val tile = board[line, index]
                     tile.x = line
                     tile.y = index
                     tile.value = c.digitToInt()
@@ -47,7 +47,7 @@ class Day09 : AlgosBase() {
                 (0 until board.y).forEach { y ->
                     val i = IsLowestPoint(board, x, y)
                     if(i)
-                        lowestPoints.add(board.Get(x, y))
+                        lowestPoints.add(board[x, y])
                 }
             }
         }
@@ -73,7 +73,7 @@ class Day09 : AlgosBase() {
         val bottom = board.GetOrNull(x, y + 1)?.value ?: 10
         val left = board.GetOrNull(x - 1, y)?.value ?: 10
         val right = board.GetOrNull(x + 1, y)?.value ?: 10
-        val currentValue = board.Get(x, y).value
+        val currentValue = board[x, y].value
         return currentValue < top && currentValue < bottom && currentValue < left && currentValue < right
     }
 
