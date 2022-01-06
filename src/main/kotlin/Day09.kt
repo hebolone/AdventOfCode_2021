@@ -1,14 +1,12 @@
 class Day09 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_09_test.txt") else input
-        val board = ParseInput(datas)
+        val board = ParseInput(input)
         val lowestPoints = FindLowestPoints(board)
         return lowestPoints.sumOf { it.value + 1 }
     }
 
     override fun Advanced(input : MutableList<String>) : Int {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_09_test.txt") else input
-        val board = ParseInput(datas)
+        val board = ParseInput(input)
         val basins = SearchForBasins(board)
         basins.sortByDescending { it.tiles.count() }
         var retValue = 1

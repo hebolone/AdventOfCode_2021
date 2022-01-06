@@ -15,6 +15,7 @@ class Algos {
         val day09 = Day09()
         val day10 = Day10()
         val day11 = Day11()
+        val day12 = Day12()
 
         _Algos = listOf(
             AlgoDefinition(1, TYPEOFQUESTION.BASIC, day01::Basic),
@@ -39,9 +40,9 @@ class Algos {
             AlgoDefinition(10, TYPEOFQUESTION.ADVANCED, day10::Advanced),
             AlgoDefinition(11, TYPEOFQUESTION.BASIC, day11::Basic),
             AlgoDefinition(11, TYPEOFQUESTION.ADVANCED, day11::Advanced),
+            AlgoDefinition(12, TYPEOFQUESTION.BASIC, day12::Basic),
+            AlgoDefinition(12, TYPEOFQUESTION.ADVANCED, day12::Advanced),
         )
-
-        //day11.IsTest = true
     }
 
     enum class TYPEOFQUESTION(val symbol : String) { BASIC("a"), ADVANCED("b") }

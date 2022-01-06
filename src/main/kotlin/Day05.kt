@@ -2,8 +2,7 @@ import java.lang.Math.abs
 
 class Day05 : AlgosBase()  {
     override fun Basic(input : MutableList<String>) : Int {
-        val datas = if(IsTest) _InputTest.split(regex = "\\n".toRegex()).toMutableList() else input
-        val parsedDatas = ParseInput(datas)
+        val parsedDatas = ParseInput(input)
         val board = CreateBoard(parsedDatas)
         parsedDatas.forEach { DrawLine(board, it.from, it.to) }
         //println(board.PrintBoard({ if(it == 0) "." else it.toString() }))
@@ -12,8 +11,7 @@ class Day05 : AlgosBase()  {
     }
 
     override fun Advanced(input : MutableList<String>) : Int {
-        val datas = if(IsTest) _InputTest.split(regex = "\\n".toRegex()).toMutableList() else input
-        val parsedDatas = ParseInput(datas)
+        val parsedDatas = ParseInput(input)
         val board = CreateBoard(parsedDatas)
         parsedDatas.forEach { DrawLine(board, it.from, it.to, true) }
         //println(board.PrintBoard({ if(it == 0) "." else it.toString() }))
@@ -22,16 +20,6 @@ class Day05 : AlgosBase()  {
     }
 
     //region Private
-    private val _InputTest = """0,9 -> 5,9
-8,0 -> 0,8
-9,4 -> 3,4
-2,2 -> 2,1
-7,0 -> 7,4
-6,4 -> 2,0
-0,9 -> 2,9
-3,4 -> 1,4
-0,0 -> 8,8
-5,5 -> 8,2""".trimIndent()
     private data class Point(val x : Int, val y : Int)
     private data class Line(val from : Point, val to : Point)
 

@@ -1,13 +1,7 @@
 class Day08 : AlgosBase() {
-    override fun Basic(input : MutableList<String>) : Int {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_08_test.txt") else input
-        return ParseInputBasic(datas)
-    }
+    override fun Basic(input : MutableList<String>) : Int = ParseInputBasic(input)
 
-    override fun Advanced(input : MutableList<String>) : Int {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_08_test.txt") else input
-        return ParseInputAdvanced(datas)
-    }
+    override fun Advanced(input : MutableList<String>) : Int = ParseInputAdvanced(input)
 
     //region Private
     private fun ParseInputBasic(input : MutableList<String>) : Int {
@@ -83,7 +77,7 @@ class Day08 : AlgosBase() {
 
     private fun ParseSingleLine(input : String) : List<String> {
         val regex = "([abcdefg]{1,7})".toRegex()
-        val matchResult = regex.findAll(input)!!
+        val matchResult = regex.findAll(input)
         return matchResult.map{ it.value }.toList()
     }
 

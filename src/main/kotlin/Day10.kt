@@ -1,14 +1,12 @@
 class Day10 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_10_test.txt") else input
-        _Solution = ParseLines(datas)!!
+        _Solution = ParseLines(input)!!
         return _Solution!!.basic
     }
 
     override fun Advanced(input : MutableList<String>) : ULong {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_10_test.txt") else input
         if(_Solution == null)
-            _Solution = ParseLines(datas)
+            _Solution = ParseLines(input)
         return _Solution!!.advanced
     }
 

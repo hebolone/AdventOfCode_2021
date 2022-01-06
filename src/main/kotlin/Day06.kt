@@ -2,7 +2,7 @@ import kotlin.properties.Delegates
 
 class Day06 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : ULong {
-        val datas = if(IsTest) _InputTest.split(",").toMutableList() else input.first().split(",").toMutableList()
+        val datas = input.first().split(",").toMutableList()
         (0.._MaxValue).forEach { _Map[it] = 0u }
         MapStart(datas.map { it.toInt() })
         (1..80).forEach { _Map.NextCycle() }
@@ -10,7 +10,7 @@ class Day06 : AlgosBase() {
     }
 
     override fun Advanced(input : MutableList<String>) : ULong {
-        val datas = if(IsTest) _InputTest.split(",").toMutableList() else input.first().split(",").toMutableList()
+        val datas = input.first().split(",").toMutableList()
         (0.._MaxValue).forEach { _Map[it] = 0u }
         MapStart(datas.map { it.toInt() })
         (1..256).forEach { _Map.NextCycle() }
@@ -21,25 +21,6 @@ class Day06 : AlgosBase() {
     private val _InputTest = "3,4,3,1,2"
     private val _MaxValue = 8
     private val _Map : MutableMap<Int, ULong> = mutableMapOf()
-
-    /*private fun IterateWithRecursion(input : MutableList<Int>, day : Int, cycle : Int = 1) : MutableList<Int> {
-        var retValue = mutableListOf<Int>()
-        var newFish = 0
-        input.forEach {
-            //  Apply rules
-            when(it) {
-                0 -> {
-                    retValue.add(6)
-                    newFish ++
-                }
-                else -> retValue.add(it - 1)
-            }
-        }
-        (1..newFish).forEach { retValue.add(8) }
-
-        return if(cycle < day) IterateWithRecursion(retValue, day, cycle + 1) else retValue
-    }
-    */
 
     private fun MapStart(values : List<Int>) = values.forEach { _Map[it] = _Map[it]!! + 1u }
 

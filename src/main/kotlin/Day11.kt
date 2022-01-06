@@ -1,15 +1,13 @@
 class Day11 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_11_test.txt") else input
-        val board = ParseInput(datas)
+        val board = ParseInput(input)
         var totalFlashes = 0
         (1..100).forEach { totalFlashes += board.NextCycle() }
         return totalFlashes
     }
 
     override fun Advanced(input : MutableList<String>) : Int {
-        val datas = if(IsTest) LoadTestDatas("/home/simone/Scrivania/AdventOfCode/day_11_test.txt") else input
-        val board = ParseInput(datas)
+        val board = ParseInput(input)
         var stepSynchronized = 0
         var found = false
         do {
