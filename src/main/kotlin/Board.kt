@@ -1,4 +1,4 @@
-open class Board<T>(val x : Int, val y : Int, initializer : () -> T) /*: Iterable<T>*/ {
+open class Board<T>(val x : Int, val y : Int, val initializer : () -> T) /*: Iterable<T>*/ {
     protected val _Datas : MutableList<T> = mutableListOf()
     init {
         (1..(x * y)).forEach { _ -> _Datas.add(initializer()) }
@@ -24,6 +24,19 @@ open class Board<T>(val x : Int, val y : Int, initializer : () -> T) /*: Iterabl
         val y_derived = index / y
         val x_derived = index - (y * y_derived)
         return Pair(x_derived, y_derived)
+    }
+    fun Slice(newX : Int, newY : Int) : Board<T> {
+        val retValue = Board(newX, newY, initializer)
+        (0 until newX).forEach { oldX ->
+            run {
+                (0 until newY).forEach { oldY ->
+                    run {
+                        retValue[oldX, oldY] = this[oldX, oldY]
+                    }
+                }
+            }
+        }
+        return retValue
     }
     /*override fun iterator() : Iterator<T> {
         return BoardIterator<T>(GetLinear(0), GetLinear(_Datas.size - 1))
