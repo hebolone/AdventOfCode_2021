@@ -1,9 +1,10 @@
-open class Board<T>(val x : Int, val y : Int, val initializer : () -> T) /*: Iterable<T>*/ {
-    protected val _Datas : MutableList<T> = mutableListOf()
+open class Board<T>(val x : Int, val y : Int, initializer : () -> T) /*: Iterable<T>*/ {
+    protected val _Cells : MutableList<T> = mutableListOf()
+    protected val _Initializer = initializer
     init {
-        (1..(x * y)).forEach { _ -> _Datas.add(initializer()) }
+        (1..(x * y)).forEach { _ -> _Cells.add(initializer()) }
     }
-    fun GetLinear(value : Int) : T = _Datas[value]
+    fun GetLinear(value : Int) : T = _Cells[value]
     fun GetSize() : Int = x * y
     fun PrintBoard(printFun : (t : T) -> String = { it.toString() }) : String {
         val sb = StringBuilder()
@@ -16,17 +17,17 @@ open class Board<T>(val x : Int, val y : Int, val initializer : () -> T) /*: Ite
         return sb.toString()
     }
     //  Indexer
-    open operator fun get(xFrom : Int, yFrom : Int) : T = _Datas[xFrom + yFrom * x]
-    open operator fun get(value : Int) : T = _Datas[value]
-    open operator fun set(xFrom : Int, yFrom : Int, value : T) { _Datas[xFrom + yFrom * x] = value }
-    open operator fun set(index : Int, value : T) { _Datas[index] = value }
+    open operator fun get(xFrom : Int, yFrom : Int) : T = _Cells[xFrom + yFrom * x]
+    open operator fun get(value : Int) : T = _Cells[value]
+    open operator fun set(xFrom : Int, yFrom : Int, value : T) { _Cells[xFrom + yFrom * x] = value }
+    open operator fun set(index : Int, value : T) { _Cells[index] = value }
     fun GetCoordinatesFromIndex(index : Int) : Pair<Int, Int> {
         val y_derived = index / y
         val x_derived = index - (y * y_derived)
         return Pair(x_derived, y_derived)
     }
     fun Slice(newX : Int, newY : Int) : Board<T> {
-        val retValue = Board(newX, newY, initializer)
+        val retValue = Board(newX, newY, _Initializer)
         (0 until newX).forEach { oldX ->
             run {
                 (0 until newY).forEach { oldY ->
@@ -38,22 +39,7 @@ open class Board<T>(val x : Int, val y : Int, val initializer : () -> T) /*: Ite
         }
         return retValue
     }
-    /*override fun iterator() : Iterator<T> {
-        return BoardIterator<T>(GetLinear(0), GetLinear(_Datas.size - 1))
-    }*/
 }
-/*
-class BoardIterator<T>(val start : Int, val end : Int) : Iterator<T> {
-    var initValue = start
-
-    override fun hasNext() : Boolean {
-        return initValue <= end
-    }
-
-    override fun next(): T {
-        return initValue ++
-    }
-}*/
 
 class BoardExtended<T>(xExt : Int, yExt : Int, initializerExt : () -> T) : Board<T>(xExt, yExt, initializerExt) {
     fun GetOrNull(xFrom : Int, yFrom : Int) : T? {
@@ -61,6 +47,6 @@ class BoardExtended<T>(xExt : Int, yExt : Int, initializerExt : () -> T) : Board
         return if(xFrom < 0 || xFrom >= x || yFrom < 0 || yFrom >= y)
             null
         else
-            _Datas[index]
+            _Cells[index]
     }
 }

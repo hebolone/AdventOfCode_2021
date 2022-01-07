@@ -17,4 +17,6 @@ class Solver  {
 
         return retValue
     }
+
+    fun AddTestDay(day : Int) = _Tests.add(day)
 }
