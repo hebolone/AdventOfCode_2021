@@ -1,3 +1,5 @@
+package Days
+
 class Day08 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int = ParseInputBasic(input)
 

@@ -2,8 +2,8 @@ import java.io.File
 
 class Utils {
     companion object {
-        val FilePattern = "/home/simone/Scrivania/AdventOfCode/day_%day%.txt"
-        val FilePatternTest = "/home/simone/Scrivania/AdventOfCode/day_%day%_test.txt"
+        private const val FilePattern = "/home/simone/Scrivania/AdventOfCode/day_%day%.txt"
+        private const val FilePatternTest = "/home/simone/Scrivania/AdventOfCode/day_%day%_test.txt"
 
         private fun GetCorrectNumber(value : Int) : String = if(value < 10) "0${value}" else value.toString()
 

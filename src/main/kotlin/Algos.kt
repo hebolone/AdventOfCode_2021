@@ -1,3 +1,4 @@
+import Days.*
 import kotlin.properties.Delegates
 
 class Algos {
@@ -18,6 +19,7 @@ class Algos {
         val day12 = Day12()
         val day13 = Day13()
         val day14 = Day14()
+        val day15 = Day15()
 
         _Algos = listOf(
             AlgoDefinition(1, TYPEOFQUESTION.BASIC, day01::Basic),
@@ -48,6 +50,8 @@ class Algos {
             AlgoDefinition(13, TYPEOFQUESTION.ADVANCED, day13::Advanced),
             AlgoDefinition(14, TYPEOFQUESTION.BASIC, day14::Basic),
             AlgoDefinition(14, TYPEOFQUESTION.ADVANCED, day14::Advanced),
+            AlgoDefinition(15, TYPEOFQUESTION.BASIC, day15::Basic),
+            AlgoDefinition(15, TYPEOFQUESTION.ADVANCED, day15::Advanced),
         )
     }
 

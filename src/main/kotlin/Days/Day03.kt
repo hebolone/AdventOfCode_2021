@@ -1,3 +1,5 @@
+package Days
+
 class Day03 : AlgosBase()  {
     override fun Basic(input : MutableList<String>) : Int {
         val gammaRateResult  = CalculateGammaRate(input)

@@ -1,3 +1,5 @@
+package Days
+
 class Day10 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
         _Solution = ParseLines(input)!!

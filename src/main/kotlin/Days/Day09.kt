@@ -1,3 +1,7 @@
+package Days
+
+import BoardExtended
+
 class Day09 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
         val board = ParseInput(input)

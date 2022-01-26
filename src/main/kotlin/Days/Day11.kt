@@ -1,3 +1,8 @@
+package Days
+
+import BoardExtended
+import Coordinate
+
 class Day11 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
         val board = ParseInput(input)
@@ -22,7 +27,6 @@ class Day11 : AlgosBase() {
 
     //region Private
     private data class Octopus(var Energy : Int, var Flashes :  Int = 0, var GoingToFlash : Boolean = false)
-    private data class Coordinates(val x : Int, val y : Int)
 
     private fun ParseInput(lines : MutableList<String>) : BoardExtended<Octopus> {
         val columns = lines.first().length
@@ -67,14 +71,14 @@ class Day11 : AlgosBase() {
 
     private fun BoardExtended<Octopus>.Flash(x : Int, y : Int) {
         listOf(
-            Coordinates(x - 1, y - 1),
-            Coordinates(x, y - 1),
-            Coordinates(x + 1, y - 1),
-            Coordinates(x - 1, y),
-            Coordinates(x + 1, y),
-            Coordinates(x - 1, y + 1),
-            Coordinates(x , y + 1),
-            Coordinates(x + 1, y + 1),
+            Coordinate(x - 1, y - 1),
+            Coordinate(x, y - 1),
+            Coordinate(x + 1, y - 1),
+            Coordinate(x - 1, y),
+            Coordinate(x + 1, y),
+            Coordinate(x - 1, y + 1),
+            Coordinate(x, y + 1),
+            Coordinate(x + 1, y + 1),
         ).forEach {
             val octopus = GetOrNull(it.x, it.y)
             if(octopus != null && octopus.Energy > 0) {
@@ -89,8 +93,8 @@ class Day11 : AlgosBase() {
     }
 
     private fun BoardExtended<Octopus>.Flash(index : Int) {
-        val coordinates = GetCoordinatesFromIndex(index)
-        Flash(coordinates.first, coordinates.second)
+        val coordinate = GetCoordinateFromIndex(index)
+        Flash(coordinate.x, coordinate.y)
     }
 
     private fun BoardExtended<Octopus>.AreThereFlashes() : Boolean {

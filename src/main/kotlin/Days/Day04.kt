@@ -1,3 +1,5 @@
+package Days
+
 import kotlin.properties.Delegates
 
 class Day04 : AlgosBase() {

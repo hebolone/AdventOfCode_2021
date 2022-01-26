@@ -5,7 +5,7 @@ class Solver  {
     fun Solve(day : Int, typeOfQuestion : Algos.TYPEOFQUESTION) : String? {
         var retValue : String? = null
 
-        //  Choose algorhythm
+        //  Choose algorithm
         val algorithm = _Algos.GetAlgo(day, typeOfQuestion)
 
         //  Choose data files

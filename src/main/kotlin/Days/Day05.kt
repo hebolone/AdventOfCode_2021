@@ -1,3 +1,6 @@
+package Days
+
+import Board
 import java.lang.Math.abs
 
 class Day05 : AlgosBase()  {

@@ -1,6 +1,6 @@
 open class Board<T>(val x : Int, val y : Int, initializer : () -> T) /*: Iterable<T>*/ {
     protected val _Cells : MutableList<T> = mutableListOf()
-    protected val _Initializer = initializer
+    private val _Initializer = initializer
     init {
         (1..(x * y)).forEach { _ -> _Cells.add(initializer()) }
     }
@@ -49,4 +49,14 @@ class BoardExtended<T>(xExt : Int, yExt : Int, initializerExt : () -> T) : Board
         else
             _Cells[index]
     }
+    fun GetOrNull(coordinate: Coordinate) : T? = GetOrNull(coordinate.x, coordinate.y)
+    fun GetCoordinateFromIndex(index : Int) : Coordinate {
+        val y_derived = index / y
+        val x_derived = index - (y * y_derived)
+        return Coordinate(x_derived, y_derived)
+    }
+    fun GetIndexFromCoordinate(coordinate : Coordinate) : Int = coordinate.x + coordinate.y * x
+    operator fun get(coordinate : Coordinate) : T = this[coordinate.x, coordinate.y]
 }
+
+data class Coordinate(val x : Int, val y : Int)

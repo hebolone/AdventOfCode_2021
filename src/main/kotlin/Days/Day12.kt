@@ -1,3 +1,5 @@
+package Days
+
 import java.lang.Exception
 
 class Day12 : AlgosBase() {

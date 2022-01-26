@@ -1,4 +1,4 @@
-import kotlin.properties.Delegates
+package Days
 
 class Day06 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : ULong {

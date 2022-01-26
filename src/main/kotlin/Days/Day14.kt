@@ -1,3 +1,5 @@
+package Days
+
 import kotlin.text.last as last
 
 class Day14 : AlgosBase() {

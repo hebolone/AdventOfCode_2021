@@ -1,3 +1,5 @@
+package Days
+
 class Day01 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
         var retValue = 0

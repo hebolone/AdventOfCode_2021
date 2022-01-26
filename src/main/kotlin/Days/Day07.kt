@@ -1,3 +1,5 @@
+package Days
+
 class Day07 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
         val datas = input.first().split(",").map { it.toInt() }
