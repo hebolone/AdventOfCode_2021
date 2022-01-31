@@ -20,6 +20,7 @@ class Algos {
         val day13 = Day13()
         val day14 = Day14()
         val day15 = Day15()
+        val day16 = Day16()
 
         _Algos = listOf(
             AlgoDefinition(1, TYPEOFQUESTION.BASIC, day01::Basic),
@@ -52,6 +53,8 @@ class Algos {
             AlgoDefinition(14, TYPEOFQUESTION.ADVANCED, day14::Advanced),
             AlgoDefinition(15, TYPEOFQUESTION.BASIC, day15::Basic),
             AlgoDefinition(15, TYPEOFQUESTION.ADVANCED, day15::Advanced),
+            AlgoDefinition(16, TYPEOFQUESTION.BASIC, day16::Basic),
+            AlgoDefinition(16, TYPEOFQUESTION.ADVANCED, day16::Advanced),
         )
     }
 

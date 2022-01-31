@@ -6,24 +6,23 @@ import Coordinate
 class Day15 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
         ParseInput(input)
-        _EndingTile = Coordinate(_Board?.x?.minus(1) ?: -1, _Board?.y?.minus(1) ?: -1)
-        _Board!!.AStarAlgorithm(_StartingTile, _EndingTile)
-        return _PathsToTheEnd.minOf { it }
+        _EndingTile = _Board?.GetEnding()!!
+        return _Board!!.AStarAlgorithm(_StartingTile, _EndingTile)
     }
 
     override fun Advanced(input : MutableList<String>) : Int {
         if(_Board == null) ParseInput(input)
         _Board = _Board?.Multiply(5)
-        _EndingTile = Coordinate(_Board?.x?.minus(1) ?: -1, _Board?.y?.minus(1) ?: -1)
-        _Board!!.AStarAlgorithm(_StartingTile, _EndingTile)
-        return _PathsToTheEnd.minOf { it }
+        _EndingTile = _Board?.GetEnding()!!
+        return _Board!!.AStarAlgorithm(_StartingTile, _EndingTile)
     }
 
     //region Private
     private var _StartingTile = Coordinate(0, 0)
     private var _EndingTile = Coordinate(0, 0)
     private var _Board : BoardExtended<Int>? = null
-    private val _PathsToTheEnd = mutableListOf<Int>()
+
+    private data class AStarNode(val coordinate: Coordinate, var f : Int = 0, var g : Int = 0, var h : Int = 0, var parent : AStarNode? = null)
 
     private fun ParseInput(lines : MutableList<String>) {
         val height = lines.count()
@@ -37,7 +36,7 @@ class Day15 : AlgosBase() {
         }
     }
 
-    private fun BoardExtended<Int>.AStarAlgorithm(starting : Coordinate, ending : Coordinate) {
+    private fun BoardExtended<Int>.AStarAlgorithm(starting : Coordinate, ending : Coordinate) : Int {
         val openSet = mutableSetOf<AStarNode>()
         val closedSet = mutableSetOf<AStarNode>()
         val starting_Node = AStarNode(starting)
@@ -48,8 +47,7 @@ class Day15 : AlgosBase() {
             var currentNode = openSet.minByOrNull { it.f }!!
 
             if(currentNode.coordinate == ending_Node.coordinate) {
-                _PathsToTheEnd.add(RebuildPath(currentNode, false))
-                return
+                return RebuildPath(currentNode, false)
             }
 
             openSet.removeIf { it.coordinate == currentNode.coordinate }
@@ -62,7 +60,11 @@ class Day15 : AlgosBase() {
                 Coordinate(currentNode.coordinate.x + 1, currentNode.coordinate.y),
                 Coordinate(currentNode.coordinate.x, currentNode.coordinate.y + 1)
             ).filter {
-                this.GetOrNull(it.x, it.y) != null
+                //  Exclude cells outside board
+                GetOrNull(it.x, it.y) != null
+            }.filter {
+                //  Exclude tile I'm coming from (makes no sense!)
+                currentNode.coordinate != it
             }.forEach lit@{
                 //  Get only real children
                 //  Search this child inside my closed set
@@ -83,6 +85,8 @@ class Day15 : AlgosBase() {
                 openSet.add(child)
             }
         }
+
+        return -1
     }
 
     private fun RebuildPath(ending: AStarNode, print: Boolean = false) : Int {
@@ -101,8 +105,6 @@ class Day15 : AlgosBase() {
         }
         return path.sumOf { _Board!![it.coordinate.x, it.coordinate.y] } - _Board!![0]
     }
-
-    private data class AStarNode(val coordinate: Coordinate, var f : Int = 0, var g : Int = 0, var h : Int = 0, var parent : AStarNode? = null)
 
     private fun BoardExtended<Int>.Multiply(value : Int) : BoardExtended<Int> {
         var retValue = BoardExtended<Int>(this.x * value, this.y * value) { 0 }
@@ -128,22 +130,6 @@ class Day15 : AlgosBase() {
         return retValue
     }
 
-    /*private fun BoardExtended<Int>.ToBinaryTree() : BinaryTree<Coordinate> {
-        val bt = BinaryTree<Coordinate>()
-        (0 until GetSize()).forEach {
-            //  For every tile I create a new node on my binary tree
-            val coordinate = GetCoordinateFromIndex(it)
-            bt.AddNode(coordinate)
-            val nodeAdded = bt.GetNode(coordinate)
-
-            //  Check it this node is a descendant
-            val ancestor1 = bt.GetNode(Coordinate(coordinate.x - 1, coordinate.y))
-            val ancestor2 = bt.GetNode(Coordinate(coordinate.x, coordinate.y - 1))
-
-            if(ancestor1 != null) bt.AddDescendant(ancestor1, nodeAdded!!)
-            if(ancestor2 != null) bt.AddDescendant(ancestor2, nodeAdded!!)
-        }
-        return bt
-    }*/
+    private fun BoardExtended<Int>.GetEnding() : Coordinate = Coordinate(x - 1, y - 1)
     //endregion
 }
