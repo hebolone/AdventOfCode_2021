@@ -1,13 +1,13 @@
-fun main(args: Array<String>) {
+fun main() {
     // Try adding program arguments via Run/Debug configuration.
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
 
     val s = Solver()
-    val lastDay = 31
+    //val lastDay = 31
     val results = mutableListOf<Day>()
 
     //  Single question
-    val day = 16
+    val day = 17
     //s.AddTestDay(day)
 
     var typeOfQuestion = Algos.TYPEOFQUESTION.BASIC
