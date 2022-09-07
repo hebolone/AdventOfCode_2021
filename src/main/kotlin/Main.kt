@@ -3,25 +3,17 @@ fun main() {
     // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
 
     val s = Solver()
-    //val lastDay = 31
     val results = mutableListOf<Day>()
 
     //  Single question
-    val day = 17
-    //s.AddTestDay(day)
+    val day = 18
+    s.AddTestDay(day)
 
     var typeOfQuestion = Algos.TYPEOFQUESTION.BASIC
     results.addIfPresent(day, typeOfQuestion, s.Solve(day, typeOfQuestion))
     typeOfQuestion = Algos.TYPEOFQUESTION.ADVANCED
     results.addIfPresent(day, typeOfQuestion, s.Solve(day, typeOfQuestion))
 
-/*
-    //  Multiple questions
-    (1..lastDay).forEach {
-        results.addIfPresent(it, Algos.TYPEOFQUESTION.BASIC, s.Solve(it, Algos.TYPEOFQUESTION.BASIC))
-        results.addIfPresent(it, Algos.TYPEOFQUESTION.ADVANCED, s.Solve(it, Algos.TYPEOFQUESTION.ADVANCED))
-    }
-*/
     results.forEach {
         println(it.toPrintableString())
     }

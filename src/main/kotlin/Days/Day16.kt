@@ -139,8 +139,6 @@ class Day16 : AlgosBase() {
             return value.repeat(zeroesToAdd) + this
         }
 
-        private fun MutableList<PacketBase>.VersionSum() = sumOf { it.version }
-
         private operator fun ReadResult.plus(value : Int) : ReadResult = ReadResult(bitsRead + value, resultOperation)
     }
 

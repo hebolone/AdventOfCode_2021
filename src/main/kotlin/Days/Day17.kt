@@ -8,7 +8,6 @@ class Day17 : AlgosBase() {
     }
 
     override fun Advanced(input : MutableList<String>) : Int {
-        //ParseInput(input)
         return ParseInput(input, TREQUESTTYPE.ADVANCED)
     }
 
