@@ -2,10 +2,15 @@ package Days
 
 class Day18 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
-        val snailFishes = ParseInput(mutableListOf("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]"))
-        snailFishes.forEach { it.Actions() }
+        val f1 = "[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]"
+        val f2 = "[[[[4,3],4],4],[7,[[8,4],9]]] + [1,1]"
 
-//        var addeSnailFishes = Group("[[1,2],3]") + Group("[3,4]") + Group("[7,7]")
+
+//        val snailFishes = ParseInput(mutableListOf(f2))
+//        snailFishes.forEach { it.Actions() }
+
+        var addeSnailFishes = Group("[[[[4,3],4],4],[7,[[8,4],9]]]") + Group("[1,1]")
+        addeSnailFishes.Actions()
 //        println("$addeSnailFishes")
 
         return -1
@@ -20,7 +25,6 @@ class Day18 : AlgosBase() {
     private enum class TSNAILTYPE { DESCENDANT, INTEGER }
     private enum class TACTION { EXPLODE, SPLIT }
     private data class SnailValue(val snailType : TSNAILTYPE, var value : Any)
-    private data class ActionToDo(var action : TACTION, var snailFish: SnailFish)
     private data class SnailFish(val ancestor : SnailFish?, var left : SnailValue? = null, var right : SnailValue? = null) {
         override fun toString(): String = "[${left?.value.toString()},${right?.value.toString()}]"
         val leftAsInt : Int
@@ -39,6 +43,7 @@ class Day18 : AlgosBase() {
     }
     private class Group(initString : String) {
         private data class Position(val index : Int, val value : Int, val position : TPOSITION, val snailFish: SnailFish)
+        private data class ActionToDo(var action : TACTION, var snailFish: SnailFish, var position : TPOSITION? = null)
         private var _SnailFishes : MutableList<SnailFish> = mutableListOf<SnailFish>()
         private var _Positions : MutableList<Position> = mutableListOf<Position>()
 
@@ -51,6 +56,7 @@ class Day18 : AlgosBase() {
             _Positions.clear()
             var position = TPOSITION.LEFT
             var current: SnailFish? = null
+            var buffer = ""
             definition.forEach { c ->
                 run {
                     when (c) {
@@ -67,21 +73,32 @@ class Day18 : AlgosBase() {
                         }
 
                         in ('0'..'9') -> {
-                            when (position) {
-                                TPOSITION.LEFT -> current?.left = SnailValue(TSNAILTYPE.INTEGER, c.digitToInt())
-                                TPOSITION.RIGHT -> current?.right = SnailValue(TSNAILTYPE.INTEGER, c.digitToInt())
-                            }
+                            buffer += c
+//                            when (position) {
+//                                TPOSITION.LEFT -> current?.left = SnailValue(TSNAILTYPE.INTEGER, c.digitToInt())
+//                                TPOSITION.RIGHT -> current?.right = SnailValue(TSNAILTYPE.INTEGER, c.digitToInt())
+//                            }
                             //  Add to position list
-                            _Positions.add(Position(_Positions.size + 1, c.digitToInt(), position, current !!))
+//                            _Positions.add(Position(_Positions.size + 1, c.digitToInt(), position, current !!))
                         }
 
                         ',' -> {
                             //  Change left to right
+                            if(buffer != "") {
+                                current?.left = SnailValue(TSNAILTYPE.INTEGER, buffer.toInt())
+                                _Positions.add(Position(_Positions.size + 1, buffer.toInt(), TPOSITION.LEFT, current !!))
+                                buffer = ""
+                            }
                             position = TPOSITION.RIGHT
                         }
 
                         ']' -> {
                             //  Set the new current: the father of this one
+                            if(buffer != "") {
+                                current?.right = SnailValue(TSNAILTYPE.INTEGER, buffer.toInt())
+                                _Positions.add(Position(_Positions.size + 1, buffer.toInt(), TPOSITION.RIGHT, current !!))
+                                buffer = ""
+                            }
                             current = current?.ancestor
                         }
                     }
@@ -102,9 +119,13 @@ class Day18 : AlgosBase() {
                         var explosion = it.GetNumberOfAncestors() >= 4
                         if(explosion) {
                             actionToDo = ActionToDo(TACTION.EXPLODE, it)
-
-                            println("Going to explode: $it")
-
+                            return@lit
+                        }
+                        if(it.leftAsInt >= 10) {
+                            actionToDo = ActionToDo(TACTION.SPLIT, it, TPOSITION.LEFT)
+                            return@lit
+                        } else if(it.rightAsInt >= 10) {
+                            actionToDo = ActionToDo(TACTION.SPLIT, it, TPOSITION.RIGHT)
                             return@lit
                         }
 //                        var split = it.leftAsInt >= 10 || it.rightAsInt >= 10
@@ -117,10 +138,10 @@ class Day18 : AlgosBase() {
 
                 when(actionToDo?.action) {
                     TACTION.EXPLODE -> Explode(actionToDo?.snailFish !!)
-                    TACTION.SPLIT -> Split(actionToDo?.snailFish !!)
+                    TACTION.SPLIT -> Split(actionToDo?.snailFish !!, actionToDo?.position !!)
                 }
 
-                println("Explosion: $this")
+                println("Action: $this")
             } while(actionToDo != null)
         }
 
@@ -148,29 +169,38 @@ class Day18 : AlgosBase() {
             CalculateSnailFishes(this.toString())
         }
 
-        private fun Split(snailFish : SnailFish) {
-//            //  Is this left or right?
-//            var current = 0
-//            var position = TPOSITION.LEFT
-//            if(this.leftAsInt >= 10) {
-//                current = leftAsInt
-//            } else {
-//                current = rightAsInt
-//                position = TPOSITION.RIGHT
-//            }
-//
-//            var leftValue = current / 2
-//            val newSnailFish = SnailFish(
-//                this,
-//                SnailValue(TSNAILTYPE.INTEGER, leftValue),
-//                SnailValue(TSNAILTYPE.INTEGER, current - leftValue)
-//            )
-//            when(position) {
-//                TPOSITION.LEFT -> this.left = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
-//                TPOSITION.RIGHT -> this.right = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
-//            }
-//
-//            _SnailFishes.add(newSnailFish)
+        private fun Split(snailFish : SnailFish, position : TPOSITION) {
+            val values = when(position) {
+                TPOSITION.LEFT -> {
+                    var leftValue = snailFish.leftAsInt / 2
+                    var rightValue = snailFish.leftAsInt - leftValue
+                    Pair(leftValue, rightValue)
+                }
+                TPOSITION.RIGHT -> {
+                    var leftValue = snailFish.rightAsInt / 2
+                    var rightValue = snailFish.rightAsInt - leftValue
+                    Pair(leftValue, rightValue)
+                }
+            }
+
+            val newSnailFish = SnailFish(
+                snailFish,
+                SnailValue(TSNAILTYPE.INTEGER, values.first),
+                SnailValue(TSNAILTYPE.INTEGER, values.second)
+            )
+            _SnailFishes.add(newSnailFish)
+
+            when(position) {
+                TPOSITION.LEFT -> {
+                    snailFish.left = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
+                }
+                TPOSITION.RIGHT -> {
+                    snailFish.right = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
+                }
+            }
+
+            //  Recalculating indexes
+            CalculateSnailFishes(this.toString())
         }
 
         private fun SearchLeftSide(snailFish : SnailFish) : Position? {
@@ -189,11 +219,10 @@ class Day18 : AlgosBase() {
         private fun SearchRightSide(snailFish : SnailFish) : Position? {
             var currentPosition : Position? = _Positions.first { it.snailFish == snailFish }
             var found = false
-            //currentPosition = _Positions.firstOrNull { (it.index > currentPosition?.index ?: -1) && (it.snailFish != currentPosition?.snailFish) }
 
             while(!found && currentPosition != null) {
                 var current = currentPosition.index + 1
-                currentPosition = _Positions.firstOrNull { (it.index > currentPosition?.index ?: -1) && (it.snailFish != currentPosition?.snailFish) }
+                currentPosition = _Positions.firstOrNull { it.index > current && it.snailFish != snailFish }
                 found = currentPosition?.snailFish?.containsInteger() ?: false
             }
             return if(found) currentPosition else null
