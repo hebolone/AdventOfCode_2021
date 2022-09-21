@@ -1,17 +1,38 @@
 package Days
 
+import com.sun.jdi.IntegerValue
+
 class Day18 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
-        val f1 = "[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]"
-        val f2 = "[[[[4,3],4],4],[7,[[8,4],9]]] + [1,1]"
-
+//        val f1 = "[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]"
+//        val f2 = "[[[[4,3],4],4],[7,[[8,4],9]]] + [1,1]"
 
 //        val snailFishes = ParseInput(mutableListOf(f2))
 //        snailFishes.forEach { it.Actions() }
+//        val s1 = Group("[[[[4,3],4],4],[7,[[8,4],9]]]") + Group("[1,1]")
+//        val s1 = Group("[1,1]") +
+//                Group("[2,2]") +
+//                Group("[3,3]") +
+//                Group("[4,4]") +
+//                Group("[5,5]") +
+//                Group("[6,6]")
+        val s1 = Group("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]") +
+                  Group("[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]")
+//                Group("[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]") +
+//                Group("[[[[2,4],7],[6,[0,5]]],[[[6,8],[2,8]],[[2,1],[4,5]]]]") +
+//                Group("[7,[5,[[3,8],[1,4]]]]") +
+//                Group("[[2,[2,2]],[8,[8,1]]]") +
+//                Group("[2,9]") +
+//                Group("[1,[[[9,3],9],[[9,0],[0,7]]]]") +
+//                Group("[[[5,[7,4]],7],1]") +
+//                Group("[[[[4,2],2],6],[8,7]]")
 
-        var addeSnailFishes = Group("[[[[4,3],4],4],[7,[[8,4],9]]]") + Group("[1,1]")
-        addeSnailFishes.Actions()
-//        println("$addeSnailFishes")
+        //val s1 = Group("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]").Actions()
+
+        var addeSnailFishes = s1
+//        addeSnailFishes.Actions()
+        println("$addeSnailFishes")
+        println("Magnitude: ${s1.Magnitude()}")
 
         return -1
     }
@@ -39,7 +60,21 @@ class Day18 : AlgosBase() {
 
         fun containsInteger() : Boolean = left?.snailType == TSNAILTYPE.INTEGER || right?.snailType == TSNAILTYPE.INTEGER
 
+        fun onlyIntegers() : Boolean = left?.snailType == TSNAILTYPE.INTEGER && right?.snailType == TSNAILTYPE.INTEGER
+
         fun getPositionFromAncestor(snailFish : SnailFish) : TPOSITION = if(ancestor?.left?.value == snailFish) TPOSITION.LEFT else TPOSITION.RIGHT
+
+        fun calculateMagnitude() : Int {
+            var leftValue = left?.value as? Int ?: -1
+            if(leftValue == -1)
+                leftValue = (left?.value as SnailFish).calculateMagnitude()
+
+            var rightValue = right?.value as? Int ?: -1
+            if(rightValue == -1)
+                rightValue = (right?.value as SnailFish).calculateMagnitude()
+
+            return (3 * leftValue) + (2 * rightValue)
+        }
     }
     private class Group(initString : String) {
         private data class Position(val index : Int, val value : Int, val position : TPOSITION, val snailFish: SnailFish)
@@ -106,17 +141,17 @@ class Day18 : AlgosBase() {
             }
         }
 
-        fun Actions() {
+        fun Actions() : Group {
             //  Search for condition of explosion:
             //  1 - inside 4 pair (explosion)
             //  2 - one number is 10 or more (split)
-            println("SnailFish: $this")
+            println("Before action: $this")
             var actionToDo : ActionToDo?
-          do {
+            do {
                 actionToDo = null
                 run lit@ {
                     _SnailFishes.forEach {
-                        var explosion = it.GetNumberOfAncestors() >= 4
+                        var explosion = it.GetNumberOfAncestors() >= 4 && it.onlyIntegers()
                         if(explosion) {
                             actionToDo = ActionToDo(TACTION.EXPLODE, it)
                             return@lit
@@ -128,11 +163,6 @@ class Day18 : AlgosBase() {
                             actionToDo = ActionToDo(TACTION.SPLIT, it, TPOSITION.RIGHT)
                             return@lit
                         }
-//                        var split = it.leftAsInt >= 10 || it.rightAsInt >= 10
-//                        if(split) {
-//                            actionToDo = ActionToDo(TACTION.SPLIT, it)
-//                            return@lit
-//                        }
                     }
                 }
 
@@ -141,8 +171,10 @@ class Day18 : AlgosBase() {
                     TACTION.SPLIT -> Split(actionToDo?.snailFish !!, actionToDo?.position !!)
                 }
 
-                println("Action: $this")
+                println("Action (${actionToDo?.action}): $this")
             } while(actionToDo != null)
+
+            return this
         }
 
         private fun Explode(snailFish : SnailFish) {
@@ -238,9 +270,11 @@ class Day18 : AlgosBase() {
             return retValue
         }
 
-        operator fun plus(added : Group) : Group = Group("[$this,$added]")
+        operator fun plus(added : Group) : Group = Group("[$this,$added]").Actions()
 
         override fun toString(): String = _SnailFishes.single { it.ancestor == null }.toString()
+
+        fun Magnitude() : Int = _SnailFishes.single { it.ancestor == null }.calculateMagnitude()
     }
 
     private fun ParseInput(lines : MutableList<String>) : MutableList<Group> {
