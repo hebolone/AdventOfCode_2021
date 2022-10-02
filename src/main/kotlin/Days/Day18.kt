@@ -1,11 +1,9 @@
 package Days
 
-import com.sun.jdi.IntegerValue
-
 class Day18 : AlgosBase() {
     override fun Basic(input : MutableList<String>) : Int {
 //        val f1 = "[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]"
-//        val f2 = "[[[[4,3],4],4],[7,[[8,4],9]]] + [1,1]"
+//        val s1 = Group("[[[[4,3],4],4],[7,[[8,4],9]]]") + Group("[1,1]")
 
 //        val snailFishes = ParseInput(mutableListOf(f2))
 //        snailFishes.forEach { it.Actions() }
@@ -16,8 +14,8 @@ class Day18 : AlgosBase() {
 //                Group("[4,4]") +
 //                Group("[5,5]") +
 //                Group("[6,6]")
-        val s1 = Group("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]") +
-                  Group("[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]")
+//        val s1 = Group("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]") +
+//                  Group("[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]") +
 //                Group("[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]") +
 //                Group("[[[[2,4],7],[6,[0,5]]],[[[6,8],[2,8]],[[2,1],[4,5]]]]") +
 //                Group("[7,[5,[[3,8],[1,4]]]]") +
@@ -27,11 +25,11 @@ class Day18 : AlgosBase() {
 //                Group("[[[5,[7,4]],7],1]") +
 //                Group("[[[[4,2],2],6],[8,7]]")
 
-        //val s1 = Group("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]").Actions()
+        val s1 = Group("[[[[7,0],[7,7]],[[7,7],[7,8]]],[[[7,7],[8,8]],[[7,7],[8,7]]]]") + Group("[7,[5,[[3,8],[1,4]]]]")
 
-        var addeSnailFishes = s1
-//        addeSnailFishes.Actions()
-        println("$addeSnailFishes")
+        var addedSnailFishes = s1
+        addedSnailFishes.Reduce()
+        println("$addedSnailFishes")
         println("Magnitude: ${s1.Magnitude()}")
 
         return -1
@@ -44,7 +42,7 @@ class Day18 : AlgosBase() {
     //region Private
     private enum class TPOSITION { LEFT, RIGHT }
     private enum class TSNAILTYPE { DESCENDANT, INTEGER }
-    private enum class TACTION { EXPLODE, SPLIT }
+    private enum class TACTION { EXPLODE, SPLIT, ANY }
     private data class SnailValue(val snailType : TSNAILTYPE, var value : Any)
     private data class SnailFish(val ancestor : SnailFish?, var left : SnailValue? = null, var right : SnailValue? = null) {
         override fun toString(): String = "[${left?.value.toString()},${right?.value.toString()}]"
@@ -58,9 +56,9 @@ class Day18 : AlgosBase() {
                 TPOSITION.RIGHT -> right = SnailValue(TSNAILTYPE.INTEGER, rightAsInt + value)
             }
 
-        fun containsInteger() : Boolean = left?.snailType == TSNAILTYPE.INTEGER || right?.snailType == TSNAILTYPE.INTEGER
+        fun containsAtLeastOneInteger() : Boolean = left?.snailType == TSNAILTYPE.INTEGER || right?.snailType == TSNAILTYPE.INTEGER
 
-        fun onlyIntegers() : Boolean = left?.snailType == TSNAILTYPE.INTEGER && right?.snailType == TSNAILTYPE.INTEGER
+        fun containsOnlyIntegers() : Boolean = left?.snailType == TSNAILTYPE.INTEGER && right?.snailType == TSNAILTYPE.INTEGER
 
         fun getPositionFromAncestor(snailFish : SnailFish) : TPOSITION = if(ancestor?.left?.value == snailFish) TPOSITION.LEFT else TPOSITION.RIGHT
 
@@ -109,12 +107,6 @@ class Day18 : AlgosBase() {
 
                         in ('0'..'9') -> {
                             buffer += c
-//                            when (position) {
-//                                TPOSITION.LEFT -> current?.left = SnailValue(TSNAILTYPE.INTEGER, c.digitToInt())
-//                                TPOSITION.RIGHT -> current?.right = SnailValue(TSNAILTYPE.INTEGER, c.digitToInt())
-//                            }
-                            //  Add to position list
-//                            _Positions.add(Position(_Positions.size + 1, c.digitToInt(), position, current !!))
                         }
 
                         ',' -> {
@@ -141,49 +133,111 @@ class Day18 : AlgosBase() {
             }
         }
 
-        fun Actions() : Group {
+        private fun SearchForAction(snailFish: SnailFish, actionSearched: TACTION) : ActionToDo? {
+            when(actionSearched) {
+                TACTION.EXPLODE -> {
+                    //  Explosion
+                    if(snailFish.GetNumberOfAncestors() == 4 && snailFish.containsOnlyIntegers())
+                        return ActionToDo(TACTION.EXPLODE, snailFish)
+                }
+                TACTION.SPLIT -> {
+                    //  Split
+                    if (snailFish.leftAsInt >= 10)
+                        return ActionToDo(TACTION.SPLIT, snailFish, TPOSITION.LEFT)
+
+                    if (snailFish.rightAsInt >= 10)
+                        return ActionToDo(TACTION.SPLIT, snailFish, TPOSITION.RIGHT)
+                }
+                TACTION.ANY -> {
+                    //  Explosion
+                    if(snailFish.GetNumberOfAncestors() >= 4 && snailFish.containsOnlyIntegers())
+                        return ActionToDo(TACTION.EXPLODE, snailFish)
+
+                    //  Split
+                    if (snailFish.leftAsInt >= 10)
+                        return ActionToDo(TACTION.SPLIT, snailFish, TPOSITION.LEFT)
+
+                    if (snailFish.rightAsInt >= 10)
+                        return ActionToDo(TACTION.SPLIT, snailFish, TPOSITION.RIGHT)
+                }
+            }
+
+            //  Continue searching recursively
+            var action : ActionToDo? = null
+            if(snailFish.left?.snailType == TSNAILTYPE.DESCENDANT) {
+                action = SearchForAction(snailFish.left?.value as SnailFish, actionSearched)
+                if(action != null) return action
+            }
+            if(snailFish.right?.snailType == TSNAILTYPE.DESCENDANT) {
+                action = SearchForAction(snailFish.right?.value as SnailFish, actionSearched)
+                if(action != null) return action
+            }
+            return null
+        }
+
+//        fun Reduce() : Group {
+//            //  Search for condition of explosion:
+//            //  1 - inside 4 pair (explosion)
+//            //  2 - one number is 10 or more (split)
+//            println("Before action: $this")
+//            var actionToDo : ActionToDo?
+//            do {
+//                actionToDo = SearchForAction(_SnailFishes.single { it.ancestor == null }, TACTION.ANY)
+//
+//                if(actionToDo != null) {
+//                    val snailFishExecuted = actionToDo.snailFish.toString()
+//                    when(actionToDo.action) {
+//                        TACTION.EXPLODE -> Explode(actionToDo?.snailFish)
+//                        TACTION.SPLIT -> Split(actionToDo?.snailFish, actionToDo?.position !!)
+//                    }
+//                    //  Recalculating indexes
+//                    CalculateSnailFishes(this.toString())
+//
+//                    println("Action (${actionToDo?.action}): $this (on snail: $snailFishExecuted)")
+//                    //PrintColored(_SnailFishes.single { it.ancestor == null }, actionToDo?.snailFish)
+//                }
+//
+//            } while(actionToDo != null)
+//            return this
+//        }
+
+        fun Reduce() : Group {
             //  Search for condition of explosion:
             //  1 - inside 4 pair (explosion)
             //  2 - one number is 10 or more (split)
             println("Before action: $this")
             var actionToDo : ActionToDo?
             do {
-                actionToDo = null
-                run lit@ {
-                    _SnailFishes.forEach {
-                        var explosion = it.GetNumberOfAncestors() >= 4 && it.onlyIntegers()
-                        if(explosion) {
-                            actionToDo = ActionToDo(TACTION.EXPLODE, it)
-                            return@lit
-                        }
-                        if(it.leftAsInt >= 10) {
-                            actionToDo = ActionToDo(TACTION.SPLIT, it, TPOSITION.LEFT)
-                            return@lit
-                        } else if(it.rightAsInt >= 10) {
-                            actionToDo = ActionToDo(TACTION.SPLIT, it, TPOSITION.RIGHT)
-                            return@lit
-                        }
+                do {
+                    //  Explode
+                    actionToDo = SearchForAction(_SnailFishes.single { it.ancestor == null }, TACTION.EXPLODE)
+                    if(actionToDo != null) {
+                        val snailFishExecuted = actionToDo.snailFish.toString()
+                        Explode(actionToDo?.snailFish)
+                        CalculateSnailFishes(this.toString())
+                        println("Action (${actionToDo?.action}): $this (on snail: $snailFishExecuted)")
                     }
-                }
+                } while(actionToDo != null)
 
-                when(actionToDo?.action) {
-                    TACTION.EXPLODE -> Explode(actionToDo?.snailFish !!)
-                    TACTION.SPLIT -> Split(actionToDo?.snailFish !!, actionToDo?.position !!)
+                //  Split
+                actionToDo = SearchForAction(_SnailFishes.single { it.ancestor == null }, TACTION.SPLIT)
+                if(actionToDo != null) {
+                    val snailFishExecuted = actionToDo.snailFish.toString()
+                    Split(actionToDo?.snailFish, actionToDo?.position !!)
+                    CalculateSnailFishes(this.toString())
+                    println("Action (${actionToDo?.action}): $this (on snail: $snailFishExecuted)")
                 }
-
-                println("Action (${actionToDo?.action}): $this")
             } while(actionToDo != null)
-
             return this
         }
 
         private fun Explode(snailFish : SnailFish) {
             //  Search leftmost
-            val leftMost = SearchLeftSide(snailFish)
+            val leftMost = SearchOnTheLeft(snailFish)
             leftMost?.snailFish?.sum(leftMost.position, snailFish.leftAsInt)
 
             //  Search rightmost
-            val rightMost = SearchRightSide(snailFish)
+            val rightMost = SearchOnTheRight(snailFish)
             rightMost?.snailFish?.sum(rightMost.position, snailFish.rightAsInt)
 
             //  Set my parents value as 0
@@ -196,9 +250,6 @@ class Day18 : AlgosBase() {
 
             //  Have to delete current snailfish, so let's recalculate
             _SnailFishes.remove(snailFish)
-
-            //  Recalculating indexes
-            CalculateSnailFishes(this.toString())
         }
 
         private fun Split(snailFish : SnailFish, position : TPOSITION) {
@@ -223,41 +274,20 @@ class Day18 : AlgosBase() {
             _SnailFishes.add(newSnailFish)
 
             when(position) {
-                TPOSITION.LEFT -> {
-                    snailFish.left = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
-                }
-                TPOSITION.RIGHT -> {
-                    snailFish.right = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
-                }
+                TPOSITION.LEFT -> snailFish.left = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
+                TPOSITION.RIGHT -> snailFish.right = SnailValue(TSNAILTYPE.DESCENDANT, newSnailFish)
             }
-
-            //  Recalculating indexes
-            CalculateSnailFishes(this.toString())
         }
 
-        private fun SearchLeftSide(snailFish : SnailFish) : Position? {
+        private fun SearchOnTheLeft(snailFish : SnailFish) : Position? {
             //  Starting from current snail fish I have to search inside IntegerPositions list
-            var currentPosition : Position? = _Positions.first { it.snailFish == snailFish }
-            var found = false
-
-            while(!found && currentPosition != null) {
-                var current = currentPosition.index - 1
-                currentPosition = _Positions.firstOrNull { it.index == current }
-                found = currentPosition?.snailFish?.containsInteger() ?: false
-            }
-            return if(found) currentPosition else null
+            var startingPosition : Position? = _Positions.first { it.snailFish == snailFish }
+            return _Positions.lastOrNull { it.index < (startingPosition?.index ?: -1)  && it.snailFish !== snailFish }
         }
 
-        private fun SearchRightSide(snailFish : SnailFish) : Position? {
-            var currentPosition : Position? = _Positions.first { it.snailFish == snailFish }
-            var found = false
-
-            while(!found && currentPosition != null) {
-                var current = currentPosition.index + 1
-                currentPosition = _Positions.firstOrNull { it.index > current && it.snailFish != snailFish }
-                found = currentPosition?.snailFish?.containsInteger() ?: false
-            }
-            return if(found) currentPosition else null
+        private fun SearchOnTheRight(snailFish : SnailFish) : Position? {
+            var startingPosition = _Positions.first { it.snailFish == snailFish }
+            return _Positions.firstOrNull { it.index > startingPosition.index  && it.snailFish !== snailFish }
         }
 
         private fun SnailFish.GetNumberOfAncestors() : Int {
@@ -270,7 +300,7 @@ class Day18 : AlgosBase() {
             return retValue
         }
 
-        operator fun plus(added : Group) : Group = Group("[$this,$added]").Actions()
+        operator fun plus(addedSnailFish : Group) : Group = Group("[$this,$addedSnailFish]").Reduce()
 
         override fun toString(): String = _SnailFishes.single { it.ancestor == null }.toString()
 
