@@ -7,7 +7,7 @@ fun main() {
 
     //  Single question
     val day = 18
-    s.AddTestDay(day)
+    //s.AddTestDay(day)
 
     var typeOfQuestion = Algos.TYPEOFQUESTION.BASIC
     results.addIfPresent(day, typeOfQuestion, s.Solve(day, typeOfQuestion))
